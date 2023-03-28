@@ -137,13 +137,10 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 ###########################################################################
 # ImageMagick:
 ###########################################################################
-
 USER root
-
 ARG INSTALL_IMAGEMAGICK=true
 ARG IMAGEMAGICK_VERSION=latest
 ENV IMAGEMAGICK_VERSION ${IMAGEMAGICK_VERSION}
-
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
     apt-get install -yqq libmagickwand-dev imagemagick && \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
@@ -166,12 +163,41 @@ RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
     php -m | grep -q 'imagick' \
 ;fi
 
+###########################################################################
+# PHP Memcached:
+###########################################################################
+ARG INSTALL_MEMCACHED=true
+RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
+    # Install the php memcached extension
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
+        echo '' | pecl -q install memcached-2.2.0; \
+    else \
+        echo '' | pecl -q install memcached; \
+    fi \
+    && docker-php-ext-enable memcached \
+;fi
+
+###########################################################################
+# XSL:
+###########################################################################
+ARG INSTALL_XSL=true
+RUN if [ ${INSTALL_XSL} = true ]; then \
+    # Install the xsl extension
+    apt-get -y install libxslt-dev && \
+    docker-php-ext-install xsl \
+;fi
+
+###########################################################################
+# Composer:
+###########################################################################
 RUN curl https://getcomposer.org/installer > composer-setup.php \
     && php composer-setup.php \ 
     && mv composer.phar /usr/local/bin/composer \ 
     && rm composer-setup.php;
 
-# Clean up
+###########################################################################
+# Clean up:
+###########################################################################
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm /var/log/lastlog /var/log/faillog
