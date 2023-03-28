@@ -1,0 +1,7 @@
+# Global
+vendor/
+docker-compose.yml
+.history/
+.env
+.docker/nginx/default.conf
+.docker/logs/nginx/*

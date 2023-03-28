@@ -1,5 +1,0 @@
-# PHP-FPM Base Image
-
-
-
-
