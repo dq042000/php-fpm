@@ -1,4 +1,4 @@
-# Web PHP-FPM Base Image
+# PHP-FPM Base Image
 
 
 
